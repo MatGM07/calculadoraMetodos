@@ -1,0 +1,6 @@
+# Carpetas de IDE
+.idea/
+
+# Entornos virtuales
+venv/
+env/
