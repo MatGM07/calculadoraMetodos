@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interpolación Polinómica de Newton</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Estilo general */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 90%;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background: #2ecc71;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background: #27ae60;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #2ecc71;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn-back:hover {
+            background: #27ae60;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Diferenciación Numérica</h1>
+        </header>
+
+        <form method="post" action="{% url 'diferenciacionTablaResuelta' %}">
+            {% csrf_token %}
+
+            <!-- Entrada para los valores de X -->
+            <input type="text" id="valores_x" name="valores_x" placeholder="Ingrese los valores de X separados por comas (ej. 1,4,5,6)" required>
+
+            <!-- Entrada para los valores de Y -->
+            <input type="text" id="valores_y" name="valores_y" placeholder="Ingrese los valores de Y separados por comas (ej. 0,1.38,1.60,1.79)" required>
+
+            <input type="text" id="h" name="h" placeholder="Ingrese el valor de h" required>
+
+            <input type="text" id="p" name="p" placeholder="Ingrese el punto en el que desea obtener la derivada" required>
+
+            <input type="text" id="orden" name="orden" placeholder="Ingrese el orden de la derivada" required>
+
+
+            <!-- Botón de selección de tabla irregular -->
+            <div class="checkbox-container">
+                <input type="checkbox" id="tabla_irregular" name="tabla_irregular">
+                <label for="tabla_irregular">Tabla Irregular</label>
+            </div>
+
+            <input type="hidden" id="tabla_irregular_valor" name="tabla_irregular_valor" value="0">
+
+            <!-- Botón de envío -->
+            <button type="submit">Calcular Polinomio</button>
+        </form>
+
+        <div style="text-align: center;">
+            <a href="/" class="btn-back">Volver</a>
+        </div>
+
+        {% if fatalerror %}
+        <p class="error">{{ fatalerror }}</p>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkbox = document.getElementById('tabla_irregular');
+            const valoresX = document.getElementById('valores_x');
+            const valoresY = document.getElementById('valores_y');
+            const hInput = document.getElementById('h');
+            const oInput = document.getElementById('orden');
+            const hiddenInput = document.getElementById('tabla_irregular_valor');
+
+    // Actualizar el valor del campo oculto según el estado del checkbox
+            checkbox.addEventListener('change', () => {
+                hiddenInput.value = checkbox.checked ? '1' : '0';
+            });
+
+            const limitarValores = (input) => {
+            input.addEventListener('input', () => {
+                const valores = input.value.split(',').map(v => v.trim());
+                if (valores.length > 3) {
+                    // Si hay más de 3 valores, cortar el exceso
+                    input.value = valores.slice(0, 3).join(', ');
+                }
+            });
+            };
+
+            // Limitar X e Y a 3 valores si se selecciona "Tabla Irregular"
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    limitarValores(valoresX);
+                    limitarValores(valoresY);
+                    hInput.style.display = 'none';
+                    hInput.removeAttribute('required');
+                    oInput.style.display = 'none';
+                    oInput.removeAttribute('required');
+                } else {
+                    valoresX.removeEventListener('input', limitarValores);
+                    valoresY.removeEventListener('input', limitarValores);
+                    hInput.style.display = 'block';
+                    hInput.setAttribute('required', '');
+                    oInput.style.display = 'block';
+                    oInput.setAttribute('required', '');
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integración Numerica</title>
+    <style>
+        /* Estilo general */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background: white;
+            border-radius: 10px;
+        }
+
+        /* Gráfica */
+        .plot-container {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        p {
+            text-align: center;
+            font-size: 18px;
+            color: #34495e;
+        }
+
+        /* Tabla */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table thead {
+            background: #3498db;
+            color: white;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        table tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        table tbody tr:hover {
+            background: #f1f1f1;
+        }
+
+        /* Botón */
+        .btn-back {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #2ecc71;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn-back:hover {
+            background: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <h1>Resultados de la integral por el Metodo de Romberg</h1>
+
+    <p><strong>Valor final de x:</strong> {{ valor_final_x }}</p>
+
+        <table border="1">
+            <thead>
+                <tr>
+                    <th colspan="{{ matriz_romberg|length }}">Matriz de Romberg</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fila in matriz_romberg %}
+                <tr>
+                    {% for elemento in fila %}
+                    <td>{{ elemento|floatformat:6 }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Botón para volver -->
+        <div style="text-align: center;">
+            <a href="/integracion/" class="btn-back">Volver</a>
+        </div>
+    </div>
+</body>
+</html>

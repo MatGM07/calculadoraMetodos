@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora Matemática</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .button-container button {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 30px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 70%;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+        .sub-buttons {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .sub-buttons button {
+            background-color: #28a745;
+            margin: 5px;
+        }
+        .sub-buttonsS button {
+            background-color: #28a745;
+            margin: 5px;
+            width: 100%;
+        }
+        .sub-buttons button:hover {
+            background-color: #218838;
+        }
+        .back-button {
+            background-color: #dc3545;
+            margin-top: 20px;
+        }
+        .back-button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Calculadora Metodos Numericos</h1>
+        <div class="button-container">
+            <!-- Raíces con subbotones -->
+            <button id="raicesButton" onclick="toggleRaices()">Cálculo de Raíces</button>
+            <div id="raicesSubButtons" class="sub-buttons">
+                <button onclick="window.location.href='/falsaPosicion'">Método Cerrado (Falsa Posicion)</button>
+                <button onclick="window.location.href='/secante'">Método Abierto (Secante)</button>
+            </div>
+
+            <!-- Otros botones para funcionalidades -->
+            <button onclick="window.location.href='/optimizacion'">Optimización</button>
+            <button onclick="window.location.href='/ajuste'">Ajuste de Curvas</button>
+            <button id="diferenciacionButton" onclick="toggleDiferenciacion()">Diferenciación Numérica</button>
+            <div id="diferenciacionSubButtons" class="sub-buttonsS">
+                <button onclick="window.location.href='/diferenciacionTabla'">Tabla</button>
+                <button onclick="window.location.href='/diferenciacion'">Funcion</button>
+            </div>
+            <button onclick="window.location.href='/integracion'">Integración Numérica</button>
+        </div>
+    </div>
+
+    <script>
+        // Función para mostrar/ocultar los subbotones para el cálculo de raíces
+        function toggleRaices() {
+            const subButtons = document.getElementById("raicesSubButtons");
+            if (subButtons.style.display === "none" || subButtons.style.display === "") {
+                subButtons.style.display = "flex";  // Mostrar subbotones
+            } else {
+                subButtons.style.display = "none";  // Ocultar subbotones
+            }
+        }
+
+        function toggleDiferenciacion() {
+            const subButtonsDiferenciacion = document.getElementById("diferenciacionSubButtons");
+            if (subButtonsDiferenciacion.style.display === "none" || subButtonsDiferenciacion.style.display === "") {
+                subButtonsDiferenciacion.style.display = "flex";  // Mostrar subbotones
+            } else {
+                subButtonsDiferenciacion.style.display = "none";  // Ocultar subbotones
+            }
+        }
+    </script>
+</body>
+</html>

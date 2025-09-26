@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrada Matemática con Vista Previa</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Estilo general */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 600px;
+            width: 90%;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        /* Botones matemáticos */
+        .math-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .math-buttons button {
+            margin: 5px;
+            padding: 8px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .math-buttons button:hover {
+            background: #2980b9;
+        }
+
+        /* Inputs */
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        #preview {
+            font-size: 1.2em;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            min-height: 40px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Botón de envío */
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background: #2ecc71;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background: #27ae60;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #2ecc71;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn-back:hover {
+            background: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Integración Numerica Metodo de Romberg</h1>
+        </header>
+
+        <!-- Botones para insertar símbolos matemáticos -->
+        <div class="math-buttons">
+            <button type="button" onclick="insertSymbol('^2')">x²</button>
+            <button type="button" onclick="insertSymbol('^')">x^y</button>
+            <button type="button" onclick="insertSymbol('\\sqrt{}')">√</button>
+            <button type="button" onclick="insertSymbol('\\ln(')">ln</button>
+            <button type="button" onclick="insertSymbol('\\sin(')">sin</button>
+            <button type="button" onclick="insertSymbol('\\cos(')">cos</button>
+            <button type="button" onclick="insertSymbol('\\tan(')">tan</button>
+            <button type="button" onclick="insertSymbol('\\pi')">π</button>
+            <button type="button" onclick="insertSymbol('e^{}')">e</button>
+        </div>
+
+        <!-- Campo de entrada para la expresión matemática -->
+        <input type="text" id="expresion" name="expresion" placeholder="Ingrese la expresión a integrar" oninput="updatePreview()" required>
+
+        <!-- Vista previa -->
+        <div id="preview" aria-label="Vista previa matemática"></div>
+
+        <!-- Formulario de envío -->
+        <form method="post" action="{% url 'integracionResuelta' %}">
+            {% csrf_token %}
+            <input type="hidden" id="expresion-latex" name="expresion-latex">
+
+            <!-- Nuevos campos de entrada para a y b -->
+            <input type="text" id="a" name="a" placeholder="Ingrese el valor de a (limite inferior)" oninput="normalizePi(this)" required>
+            <input type="text" id="b" name="b" placeholder="Ingrese el valor de b (limite superior)" oninput="normalizePi(this)" required>
+            <input type="text" id="k" name="k" placeholder="Ingrese el valor de k" required>
+
+
+            <!-- Botón de envío -->
+            <button type="submit">Calcular</button>
+        </form>
+
+        <div style="text-align: center;">
+            <a href="/" class="btn-back">Volver</a>
+        </div>
+
+        {% if fatalerror %}
+        <p style="color: red; font-weight: bold;">{{ fatalerror }}</p>
+        {% endif %}
+    </div>
+
+    <script>
+        // Función para insertar símbolos en el campo de entrada
+        function insertSymbol(symbol) {
+            let expresionInput = document.getElementById('expresion');
+            let cursorPosition = expresionInput.selectionStart;
+            let textBeforeCursor = expresionInput.value.substring(0, cursorPosition);
+            let textAfterCursor = expresionInput.value.substring(cursorPosition);
+
+            // Insertar símbolo con paréntesis abiertos
+            if (symbol.includes("(")) {
+                symbol += ")";
+            }
+
+
+            if (symbol.includes("{}")) {
+                expresionInput.selectionStart = expresionInput.selectionEnd = cursorPosition + symbol.indexOf("{") + 1;
+            } else {
+                expresionInput.selectionStart = expresionInput.selectionEnd = cursorPosition + symbol.length;
+            }
+            expresionInput.value = textBeforeCursor + symbol + textAfterCursor;
+
+            // Ajustar el cursor después de insertar
+            expresionInput.selectionStart = expresionInput.selectionEnd = cursorPosition + symbol.length - 1;
+
+            updatePreview();
+            expresionInput.focus();
+        }
+
+        // Función para actualizar la vista previa en tiempo real
+        function updatePreview() {
+            let expresion = document.getElementById('expresion').value;
+            document.getElementById('expresion-latex').value = expresion; // Enviar al backend
+            let preview = document.getElementById('preview');
+
+            // Formatear y renderizar usando MathJax
+            preview.innerHTML = `\\(${expresion}\\)`;
+            MathJax.typesetPromise([preview]);
+        }
+
+        function normalizePi(input) {
+            input.value = input.value.replace(/pi/gi, Math.PI.toFixed(15));
+        }
+    </script>
+</body>
+</html>

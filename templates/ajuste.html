@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interpolación Polinómica de Newton</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Estilo general */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 90%;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background: #2ecc71;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background: #27ae60;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #2ecc71;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn-back:hover {
+            background: #27ae60;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Interpolación Polinómica de Newton</h1>
+        </header>
+
+        <form method="post" action="{% url 'ajusteResuelta' %}">
+            {% csrf_token %}
+            <!-- Entrada para los valores de X -->
+            <input type="text" id="valores_x" name="valores_x" placeholder="Ingrese los valores de X separados por comas (ej. 1,4,5,6)" required>
+
+            <!-- Entrada para los valores de Y -->
+            <input type="text" id="valores_y" name="valores_y" placeholder="Ingrese los valores de Y separados por comas (ej. 0,1.38,1.60,1.79)" required>
+
+            <!-- Botón de envío -->
+            <button type="submit">Calcular Polinomio</button>
+        </form>
+
+        <div style="text-align: center;">
+            <a href="/" class="btn-back">Volver</a>
+        </div>
+
+        {% if fatalerror %}
+        <p class="error">{{ fatalerror }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>
